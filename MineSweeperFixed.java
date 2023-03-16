@@ -1,3 +1,7 @@
+// Name: Benson Li
+// USC NetID: 5489569472
+// CS 455 PA3
+// Spring 2023
 
 /**
    MineSweeperFixed -- main class for a GUI minesweeper game.

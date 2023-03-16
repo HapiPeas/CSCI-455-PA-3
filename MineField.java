@@ -1,5 +1,5 @@
-// Name:
-// USC NetID:
+// Name: Benson Li
+// USC NetID: 5489569472
 // CS 455 PA3
 // Spring 2023
 
@@ -13,19 +13,34 @@
  */
 public class MineField {
    
-   // <put instance variables here>
+   private final boolean[][] minefield;
+
+   private int currentNumberMines;
+   private final int minefieldRows;
+   private final int minefieldColumns;
    
    
    
    /**
       Create a minefield with same dimensions as the given array, and populate it with the mines in the array
       such that if mineData[row][col] is true, then hasMine(row,col) will be true and vice versa.  numMines() for
-      this minefield will corresponds to the number of 'true' values in mineData.
+      this minefield will correspond to the number of 'true' values in mineData.
       @param mineData  the data for the mines; must have at least one row and one col,
                        and must be rectangular (i.e., every row is the same length)
     */
    public MineField(boolean[][] mineData) {
-      
+       minefield = mineData.clone();
+       minefieldRows = minefield.length;
+       minefieldColumns = minefield[0].length;
+
+      // Loop through 2D array and count number of mines (true values), assign to numberOfMines
+      for (boolean[] i: minefield) {
+          for (boolean j: i) {
+              if (j) {
+                  currentNumberMines++;
+              }
+          }
+      }
    }
    
    
@@ -39,7 +54,10 @@ public class MineField {
       PRE: numRows > 0 and numCols > 0 and 0 <= numMines < (1/3 of total number of field locations). 
     */
    public MineField(int numRows, int numCols, int numMines) {
-      
+      minefield = new boolean[numRows][numCols];
+      minefieldRows = numRows;
+      minefieldColumns = numCols;
+      currentNumberMines = numMines;
    }
    
 
@@ -97,7 +115,7 @@ public class MineField {
       @return number of rows in the field
    */  
    public int numRows() {
-      return 0;       // DUMMY CODE so skeleton compiles
+      return minefieldRows;
    }
    
    
@@ -106,7 +124,7 @@ public class MineField {
       @return number of columns in the field
    */    
    public int numCols() {
-      return 0;       // DUMMY CODE so skeleton compiles
+      return minefieldColumns;
    }
    
    

@@ -1,3 +1,8 @@
+// Name: Benson Li
+// USC NetID: 5489569472
+// CS 455 PA3
+// Spring 2023
+
 /**
    MineSweeper -- main class for a GUI minesweeper game.
    Games use a 9 x 9 board with 10 randomly placed mines.  For more details about this
