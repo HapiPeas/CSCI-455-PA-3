@@ -3,7 +3,7 @@
 // CS 455 PA3
 // Spring 2023
 
-
+import java.util.Random;
 /** 
    MineField
       class with locations of mines for a game.
@@ -13,7 +13,7 @@
  */
 public class MineField {
    
-   private final boolean[][] minefield;
+   private boolean[][] minefield;
 
    private int currentNumberMines;
    private final int minefieldRows;
@@ -69,7 +69,35 @@ public class MineField {
       PRE: inRange(row, col) and numMines() < (1/3 * numRows() * numCols())
     */
    public void populateMineField(int row, int col) {
-      
+       // Sets minefield to a new 2D, same-sized boolean array with no mines (default value is false)
+      minefield = new boolean[minefieldRows][minefieldColumns];
+
+      Random randomNumber = new Random();
+
+      int count = 0;
+
+      // Places mines in minefield until count is equal to number of given mines
+      while (count <= currentNumberMines) {
+          // Obtain a new random number in range of valid rows
+          int mineRow = randomNumber.nextInt(minefieldRows);
+          // Obtain a new random number in range of valid columns
+          int mineColumn = randomNumber.nextInt(minefieldColumns);
+
+          if (mineRow != row) { // If not the same row as input row, place a mine and increment
+              minefield[mineRow][mineColumn] = true;
+              count++;
+          }
+          else if (mineColumn != col) { // If same row, but not same column, place a mine and increment
+              minefield[mineRow][mineColumn] = true;
+              count++;
+          }
+          else { // If same row and same column, continue to next loop without incrementing count
+              continue;
+          }
+
+
+      }
+
    }
    
    
@@ -80,7 +108,8 @@ public class MineField {
          at the beginning of a game.
     */
    public void resetEmpty() {
-      
+       // Sets minefield to a new 2D, same-sized boolean array with no mines (default value is false)
+       minefield = new boolean[minefieldRows][minefieldColumns];
    }
 
    
@@ -94,7 +123,30 @@ public class MineField {
      PRE: inRange(row, col)
    */
    public int numAdjacentMines(int row, int col) {
-      return 0;       // DUMMY CODE so skeleton compiles
+      int adjacentMines = 0;
+      int rowLimit = 2;
+      int columnLimit = 2;
+
+      // Checks valid adjacent cells given current cell at [row][col]
+       // Checks the three cells above current cell from left to right
+       // Checks cell to the left of current cell, then cell to the right of current cell
+       // Checks the three cells below current cell from left to right
+      for (int i = -1; i < rowLimit; i++) {
+          for (int j = -1; j < columnLimit; j++) {
+              // Only checks if adjacent cell is a valid cell of minefield
+              if ((inRange(row + i, col + j))) {
+                  // Skip current cell
+                  if ((i == 0) && (j == 0)) {
+                      continue;
+                  }
+                  else {
+                      adjacentMines += mineChecker(row + i, col + j);
+                  }
+              }
+          }
+      }
+
+      return adjacentMines;
    }
    
    
@@ -106,7 +158,13 @@ public class MineField {
       @return whether (row, col) is a valid field location
    */
    public boolean inRange(int row, int col) {
-      return false;       // DUMMY CODE so skeleton compiles
+      if ((row < 0) || (row > minefieldRows)) {
+          return false;
+      }
+      if ((col < 0) || (col > minefieldColumns)) {
+          return false;
+      }
+      return true;
    }
    
    
@@ -136,23 +194,49 @@ public class MineField {
       PRE: inRange(row, col)   
    */    
    public boolean hasMine(int row, int col) {
-      return false;       // DUMMY CODE so skeleton compiles
+       return minefield[row][col];
    }
    
    
    /**
       Returns the number of mines you can have in this minefield.  For mines created with the 3-arg constructor,
-      some of the time this value does not match the actual number of mines currently on the field.  See doc for that
+      some time this value does not match the actual number of mines currently on the field.  See doc for that
       constructor, resetEmpty, and populateMineField for more details.
-    * @return
+
+    * @return - maximum number of mines allowed for minefield
     */
    public int numMines() {
-      return 0;       // DUMMY CODE so skeleton compiles
+      return currentNumberMines;
    }
 
+   public String toString() {
+       String stringMinefield = "";
+
+       for (int i = 0; i < minefieldRows; i++) {
+           for (int j = 0; j < minefieldColumns; j++) {
+               stringMinefield += ("[" + minefield[i][j] + "]");
+           }
+           stringMinefield += "\n";
+       }
+
+       return stringMinefield;
+   }
    
    // <put private methods here>
-   
+
+    /**
+     * Checks if a given a position of the minefield, in terms of the row and column values, is a mine
+     *
+     * @param row - row of the position to be checked in the minefield
+     * @param column - column of the position to be checked in the minefield
+     * @return - integer 1 if it is a mine, integer 0 if it is not a mine
+     */
+   private int mineChecker(int row, int column) {
+       if (minefield[row][column]) {
+           return 1;
+       }
+       return 0;
+   }
          
 }
 
