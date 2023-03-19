@@ -14,7 +14,6 @@ import java.util.Random;
 public class MineField {
    
    private boolean[][] minefield;
-
    private int currentNumberMines;
    private final int minefieldRows;
    private final int minefieldColumns;
@@ -33,7 +32,7 @@ public class MineField {
        minefieldRows = minefield.length;
        minefieldColumns = minefield[0].length;
 
-      // Loop through 2D array and count number of mines (true values), assign to numberOfMines
+      // Loop through 2D array and count number of mines (true values), assign to currentNumberMines
       for (boolean[] i: minefield) {
           for (boolean j: i) {
               if (j) {
@@ -77,7 +76,7 @@ public class MineField {
       int count = 0;
 
       // Places mines in minefield until count is equal to number of given mines
-      while (count <= currentNumberMines) {
+      while (count < currentNumberMines) {
           // Obtain a new random number in range of valid rows
           int mineRow = randomNumber.nextInt(minefieldRows);
           // Obtain a new random number in range of valid columns
@@ -94,8 +93,6 @@ public class MineField {
           else { // If same row and same column, continue to next loop without incrementing count
               continue;
           }
-
-
       }
 
    }
@@ -214,7 +211,12 @@ public class MineField {
 
        for (int i = 0; i < minefieldRows; i++) {
            for (int j = 0; j < minefieldColumns; j++) {
-               stringMinefield += ("[" + minefield[i][j] + "]");
+               if (minefield[i][j] == true) {
+                   stringMinefield += ("[T]");
+               }
+               else {
+                   stringMinefield += ("[F]");
+               }
            }
            stringMinefield += "\n";
        }

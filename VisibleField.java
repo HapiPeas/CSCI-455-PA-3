@@ -1,5 +1,5 @@
-// Name:
-// USC NetID:
+// Name: Benson Li
+// USC NetID: 5489569472
 // CS 455 PA3
 // Spring 2023
 
@@ -10,7 +10,7 @@
   user can see about the minefield). Client can call getStatus(row, col) for any square.
   It actually has data about the whole current state of the game, including  
   the underlying mine field (getMineField()).  Other accessors related to game status: numMinesLeft(), isGameOver().
-  It also has mutators related to actions the player could do (resetGameDisplay(), cycleGuess(), uncover()),
+  It also has mutators related to action the player could do (resetGameDisplay(), cycleGuess(), uncover()),
   and changes the game state accordingly.
   
   It, along with the MineField (accessible in mineField instance variable), forms
@@ -39,16 +39,32 @@ public class VisibleField {
    // ----------------------------------------------------------   
   
    // <put instance variables here>
-   
+   private int[][] visibleField;
+   private  MineField mineField;
+   private int numberMinesTotal;
+   private int numberMineGuesses;
+   private final boolean uncoveredMine;
 
    /**
       Create a visible field that has the given underlying mineField.
       The initial state will have all the locations covered, no mines guessed, and the game
       not over.
-      @param mineField  the minefield to use for for this VisibleField
+
+      @param mineField  the minefield to use for this VisibleField
     */
    public VisibleField(MineField mineField) {
-      
+      // Instance variable as a reference to original mineField
+      this.mineField = mineField;
+      visibleField = new int[mineField.numRows()][mineField.numCols()];
+      numberMinesTotal = mineField.numMines();
+      uncoveredMine = true;
+
+      for (int i = 0; i < mineField.numRows(); i++) {
+         for (int j = 0; j < mineField.numCols(); j++) {
+            visibleField[i][j] = COVERED;
+         }
+      }
+
    }
    
    
@@ -57,7 +73,12 @@ public class VisibleField {
       MineField. 
    */     
    public void resetGameDisplay() {
-      
+      for (int i = 0; i < mineField.numRows(); i++) {
+         for (int j = 0; j < mineField.numCols(); j++) {
+            visibleField[i][j] = COVERED;
+         }
+      }
+      numberMinesTotal = mineField.numMines();
    }
   
    
@@ -66,7 +87,7 @@ public class VisibleField {
       @return the minefield
     */
    public MineField getMineField() {
-      return null;       // DUMMY CODE so skeleton compiles
+      return mineField;
    }
    
    
@@ -79,18 +100,24 @@ public class VisibleField {
       PRE: getMineField().inRange(row, col)
     */
    public int getStatus(int row, int col) {
-      return 0;       // DUMMY CODE so skeleton compiles
+      return visibleField[row][col];
+
    }
 
    
    /**
-      Returns the the number of mines left to guess.  This has nothing to do with whether the mines guessed are correct
+      Returns the number of mines left to guess.  This has nothing to do with whether the mines guessed are correct
       or not.  Just gives the user an indication of how many more mines the user might want to guess.  This value will
       be negative if they have guessed more than the number of mines in the minefield.     
       @return the number of mines left to guess.
     */
    public int numMinesLeft() {
-      return 0;       // DUMMY CODE so skeleton compiles
+      if ((numberMinesTotal - numberMineGuesses) > -1) {
+         return (numberMinesTotal - numberMineGuesses);
+      }
+      else {
+         return 0;
+      }
 
    }
  
@@ -104,7 +131,15 @@ public class VisibleField {
       PRE: getMineField().inRange(row, col)
     */
    public void cycleGuess(int row, int col) {
-      
+      if (visibleField[row][col] == COVERED) {
+         visibleField[row][col] = MINE_GUESS;
+      }
+      else if (visibleField[row][col] == MINE_GUESS) {
+         visibleField[row][col] = QUESTION;
+      }
+      else {
+         visibleField[row][col] = COVERED;
+      }
    }
 
    
@@ -133,7 +168,22 @@ public class VisibleField {
       @return whether game has ended
     */
    public boolean isGameOver() {
-      return false;       // DUMMY CODE so skeleton compiles
+      // Case 1: A mine was uncovered (Game Loss)
+      if (!uncoveredMine) {
+         return true;
+      }
+      else {
+         for (int i = 0; i < mineField.numRows(); i++) {
+            for (int j = 0; j < mineField.numCols(); j++) {
+               // Case 2: A non-mine square is still covered (Game continues)
+               if ((!mineField.hasMine(i, j)) && (!this.isUncovered(i, j))) {
+                  return false;
+               }
+            }
+         }
+         // Case 3: All non-mine squares are uncovered (Game win)
+         return true;
+      }
    }
  
    
@@ -146,7 +196,9 @@ public class VisibleField {
       PRE: getMineField().inRange(row, col)
     */
    public boolean isUncovered(int row, int col) {
-      return false;       // DUMMY CODE so skeleton compiles
+      // Checks if square at (row, col) is in any of three covered states
+      return (visibleField[row][col] != MINE) && (visibleField[row][col] != INCORRECT_GUESS)
+              && (visibleField[row][col] != EXPLODED_MINE);
    }
    
  

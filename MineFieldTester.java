@@ -23,5 +23,23 @@ public class MineFieldTester {
         // Testing MineField toString method
         System.out.println(cornerMineField);
 
+        /*
+        // Testing populateMinefield method
+        System.out.println("Before populateMinefield(): ");
+        System.out.println("Number of mines: " + cornerMineField.numMines());
+        System.out.println(cornerMineField);
+        cornerMineField.populateMineField(0,0);
+        System.out.println("After populateMinefield(): ");
+        System.out.println("Number of mines: " + cornerMineField.numMines());
+        System.out.println(cornerMineField);
+        */
+
+
+        // Testing numAdjacentMines
+        System.out.println("Expected: 1");
+        System.out.print("Actual: ");
+        System.out.println(cornerMineField.numAdjacentMines(1,1));
+
+
     }
 }
