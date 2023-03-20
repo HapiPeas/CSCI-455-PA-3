@@ -76,6 +76,7 @@ public class VisibleField {
    */     
    public void resetGameDisplay() {
       numberMinesTotal = mineField.numMines();
+      numberMineGuesses = 0;
       coveredMine = true;
 
       for (int i = 0; i < mineField.numRows(); i++) {
@@ -122,7 +123,7 @@ public class VisibleField {
       @return the number of mines left to guess.
     */
    public int numMinesLeft() {
-      return numberMinesTotal;
+      return numberMinesTotal - numberMineGuesses;
    }
  
    

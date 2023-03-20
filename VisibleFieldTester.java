@@ -96,18 +96,19 @@ public class VisibleFieldTester {
          MineField testMineField = new MineField(smallMineField);
          VisibleField testVisibleField = new VisibleField(testMineField);
          System.out.println(testVisibleField.isUncovered(0,0));
+         System.out.println(testVisibleField.numMinesLeft());
 
          testVisibleField.cycleGuess(0,0);
          System.out.println(testVisibleField);
          System.out.println(testVisibleField.isUncovered(0,0));
+         System.out.println(testVisibleField.numMinesLeft());
 
-         testVisibleField.cycleGuess(0,0);
+         testVisibleField.cycleGuess(1,0);
          System.out.println(testVisibleField);
          System.out.println(testVisibleField.isUncovered(0,0));
+         System.out.println(testVisibleField.numMinesLeft());
 
-         testVisibleField.cycleGuess(0,0);
-         System.out.println(testVisibleField);
-         System.out.println(testVisibleField.isUncovered(0,0));
+
     }
 
     private static void randomGame() {
