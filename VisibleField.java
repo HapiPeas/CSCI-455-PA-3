@@ -136,7 +136,6 @@ public class VisibleField {
       }
       else {
          visibleField[row][col] = COVERED;
-
       }
    }
 
@@ -162,6 +161,7 @@ public class VisibleField {
          if (mineField.hasMine(row, col)) {
             visibleField[row][col] = EXPLODED_MINE;
             coveredMine = false;
+            this.postGameStatus();
             return false;
          }
          // Case 2: Square to be uncovered has at least one adjacent mine
@@ -214,8 +214,8 @@ public class VisibleField {
     */
    public boolean isUncovered(int row, int col) {
       // Checks if square at (row, col) is in an uncovered states
-      return (visibleField[row][col] != COVERED) || (visibleField[row][col] == MINE_GUESS)
-              || (visibleField[row][col] == QUESTION);
+      return (visibleField[row][col] != COVERED) && (visibleField[row][col] != MINE_GUESS)
+              && (visibleField[row][col] != QUESTION);
    }
 
    public String toString() {
@@ -249,5 +249,24 @@ public class VisibleField {
    }
  
    // <put private methods here>
-   
+
+   // Marks all incorrectly guessed squares (assumed to be mines) and marks all non-guessed mines
+   private void postGameStatus() {
+      for (int i = 0; i < mineField.numRows(); i++) {
+         for (int j = 0; j <mineField.numCols(); j++) {
+            // Case 1: Square is marked as being a mine BUT is not a mine
+            if ((visibleField[i][j] == MINE_GUESS) && (!mineField.hasMine(i,j))) {
+               visibleField[i][j] = INCORRECT_GUESS;
+            }
+            else if ((visibleField[i][j] != MINE_GUESS) && (!this.isUncovered(i,j)) && (mineField.hasMine(i,j))) {
+               visibleField[i][j] = MINE;
+            }
+         }
+      }
+   }
+
+   private void emptySquareRecursions(int row, int col) {
+
+   }
+
 }

@@ -50,7 +50,7 @@ public class MineSweeperFixed {
 
       frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 
-      GameBoardPanel gameBoard = new GameBoardPanel(new VisibleField(new MineField(almostEmptyMineField)));
+      GameBoardPanel gameBoard = new GameBoardPanel(new VisibleField(new MineField(smallMineField)));
 
       frame.add(gameBoard);
 

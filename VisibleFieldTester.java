@@ -2,7 +2,7 @@
 public class VisibleFieldTester {
     public static void main(String[] args) {
 
-         ;
+         testCycleGuess();
     }
 
     private static void testOne() {
@@ -85,5 +85,28 @@ public class VisibleFieldTester {
 
          System.out.println(testVisibleField.isUncovered(0,0));
          System.out.println(testVisibleField.isGameOver());
+    }
+
+    private static void testCycleGuess() {
+         boolean[][] smallMineField =
+                 {      {false, false, false, false},
+                         {true, false, false, false},
+                         {false, true, true, false},
+                         {false, true, false, true}};
+         MineField testMineField = new MineField(smallMineField);
+         VisibleField testVisibleField = new VisibleField(testMineField);
+         System.out.println(testVisibleField.isUncovered(0,0));
+
+         testVisibleField.cycleGuess(0,0);
+         System.out.println(testVisibleField);
+         System.out.println(testVisibleField.isUncovered(0,0));
+
+         testVisibleField.cycleGuess(0,0);
+         System.out.println(testVisibleField);
+         System.out.println(testVisibleField.isUncovered(0,0));
+
+         testVisibleField.cycleGuess(0,0);
+         System.out.println(testVisibleField);
+         System.out.println(testVisibleField.isUncovered(0,0));
     }
 }
