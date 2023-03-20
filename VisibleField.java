@@ -43,7 +43,7 @@ public class VisibleField {
    private  MineField mineField;
    private int numberMinesTotal;
    private int numberMineGuesses;
-   private final boolean uncoveredMine;
+   private boolean coveredMine;
 
    /**
       Create a visible field that has the given underlying mineField.
@@ -57,7 +57,7 @@ public class VisibleField {
       this.mineField = mineField;
       visibleField = new int[mineField.numRows()][mineField.numCols()];
       numberMinesTotal = mineField.numMines();
-      uncoveredMine = true;
+      coveredMine = true;
 
       for (int i = 0; i < mineField.numRows(); i++) {
          for (int j = 0; j < mineField.numCols(); j++) {
@@ -158,7 +158,25 @@ public class VisibleField {
       PRE: getMineField().inRange(row, col)
     */
    public boolean uncover(int row, int col) {
-      return false;       // DUMMY CODE so skeleton compiles
+      // Continue iff the selected square is still covered
+      if (!this.isUncovered(row, col)) {
+         // Case 1: Square to be uncovered is a mine
+         if (mineField.hasMine(row, col)) {
+            visibleField[row][col] = EXPLODED_MINE;
+            coveredMine = false;
+            return false;
+         }
+         // Case 2: Square to be uncovered has at least one adjacent mine
+         else if (mineField.numAdjacentMines(row, col) > 0) {
+            visibleField[row][col] = mineField.numAdjacentMines(row, col);
+            return true;
+         }
+         // Case 3: Square to be uncovered is an empty square
+         else {
+            return true;
+         }
+      }
+      return true;       // Do nothing if square is already uncovered
    }
  
    
@@ -169,7 +187,7 @@ public class VisibleField {
     */
    public boolean isGameOver() {
       // Case 1: A mine was uncovered (Game Loss)
-      if (!uncoveredMine) {
+      if (!coveredMine) {
          return true;
       }
       else {
