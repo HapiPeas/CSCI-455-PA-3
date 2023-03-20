@@ -40,6 +40,7 @@ public class VisibleField {
   
    // <put instance variables here>
    private int[][] visibleField;
+   private boolean[][] recursiveTracker;
    private  MineField mineField;
    private int numberMinesTotal;
    private int numberMineGuesses;
@@ -56,6 +57,7 @@ public class VisibleField {
       // Instance variable as a reference to original mineField
       this.mineField = mineField;
       visibleField = new int[mineField.numRows()][mineField.numCols()];
+      recursiveTracker = new boolean[getMineField().numRows()][mineField.numCols()];
       numberMinesTotal = mineField.numMines();
       coveredMine = true;
 
@@ -75,6 +77,13 @@ public class VisibleField {
    public void resetGameDisplay() {
       numberMinesTotal = mineField.numMines();
       coveredMine = true;
+
+      for (int i = 0; i < mineField.numRows(); i++) {
+         for (int j = 0; j < mineField.numCols(); j++) {
+            recursiveTracker[i][j] = false;
+         }
+      }
+
       for (int i = 0; i < mineField.numRows(); i++) {
          for (int j = 0; j < mineField.numCols(); j++) {
             visibleField[i][j] = COVERED;
@@ -113,7 +122,7 @@ public class VisibleField {
       @return the number of mines left to guess.
     */
    public int numMinesLeft() {
-      return numberMinesTotal - numberMineGuesses;
+      return numberMinesTotal;
    }
  
    
@@ -171,7 +180,7 @@ public class VisibleField {
          }
          // Case 3: Square to be uncovered is an empty square
          else {
-            visibleField[row][col] = 0;
+            dfsRecursion(row, col);
             return true;
          }
       }
@@ -265,7 +274,35 @@ public class VisibleField {
       }
    }
 
-   private void emptySquareRecursions(int row, int col) {
+   // Starts the DFS search with the root cell at [row, col]
+   // Starts searching north / up from root cell and then goes clockwise, including diagonal cells
+   private void dfsRecursion(int row, int col) {
+      // If the given location is within range of array and is an empty square
+      if ((!mineField.inRange(row, col)) || (recursiveTracker[row][col])) {
+         return;
+      }
+      else if (visibleField[row][col] == MINE_GUESS || visibleField[row][col] == QUESTION) {
+         return;
+      }
+      else if ((mineField.numAdjacentMines(row, col) > 0) && (mineField.numAdjacentMines(row, col) < 9)) {
+         visibleField[row][col] = mineField.numAdjacentMines(row, col);
+         recursiveTracker[row][col] = true;
+         return;
+      }
+      else {
+            visibleField[row][col] = 0;
+            recursiveTracker[row][col] = true;
+      }
+
+
+      dfsRecursion(row - 1, col); // Move up
+      dfsRecursion(row - 1, col + 1); // Move up and right
+      dfsRecursion(row, col + 1); // Move right
+      dfsRecursion(row + 1, col + 1); // Move down and right
+      dfsRecursion(row + 1, col); // Move down
+      dfsRecursion(row + 1, col - 1); // Move down and left
+      dfsRecursion(row, col - 1); // Move left
+      dfsRecursion(row - 1, col - 1); // Move up and left
 
    }
 

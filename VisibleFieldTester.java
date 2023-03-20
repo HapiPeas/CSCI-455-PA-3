@@ -109,4 +109,10 @@ public class VisibleFieldTester {
          System.out.println(testVisibleField);
          System.out.println(testVisibleField.isUncovered(0,0));
     }
+
+    private static void randomGame() {
+         MineField testMineField = new MineField(10,10,10);
+         VisibleField testVisibleField = new VisibleField(testMineField);
+         ;
+    }
 }
