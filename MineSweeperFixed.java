@@ -24,7 +24,7 @@ public class MineSweeperFixed {
        {true, false, false, false}, 
        {false, true, true, false},
        {false, true, false, true}};
-   
+
    private static boolean[][] emptyMineField = 
       {{false, false, false, false}, 
        {false, false, false, false}, 
@@ -36,7 +36,7 @@ public class MineSweeperFixed {
        {false, false, false, false}, 
        {false, false, false, false},
        {false, true, false, false}};
-       
+
 
    private static final int FRAME_WIDTH = 400;
    private static final int FRAME_HEIGHT = 425;
@@ -50,7 +50,7 @@ public class MineSweeperFixed {
 
       frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
 
-      GameBoardPanel gameBoard = new GameBoardPanel(new VisibleField(new MineField(smallMineField)));
+      GameBoardPanel gameBoard = new GameBoardPanel(new VisibleField(new MineField(almostEmptyMineField)));
 
       frame.add(gameBoard);
 

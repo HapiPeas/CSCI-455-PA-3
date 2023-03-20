@@ -73,12 +73,14 @@ public class VisibleField {
       MineField. 
    */     
    public void resetGameDisplay() {
+      numberMinesTotal = mineField.numMines();
+      coveredMine = true;
       for (int i = 0; i < mineField.numRows(); i++) {
          for (int j = 0; j < mineField.numCols(); j++) {
             visibleField[i][j] = COVERED;
          }
       }
-      numberMinesTotal = mineField.numMines();
+
    }
   
    
@@ -101,7 +103,6 @@ public class VisibleField {
     */
    public int getStatus(int row, int col) {
       return visibleField[row][col];
-
    }
 
    
@@ -112,13 +113,7 @@ public class VisibleField {
       @return the number of mines left to guess.
     */
    public int numMinesLeft() {
-      if ((numberMinesTotal - numberMineGuesses) > -1) {
-         return (numberMinesTotal - numberMineGuesses);
-      }
-      else {
-         return 0;
-      }
-
+      return numberMinesTotal - numberMineGuesses;
    }
  
    
@@ -133,12 +128,15 @@ public class VisibleField {
    public void cycleGuess(int row, int col) {
       if (visibleField[row][col] == COVERED) {
          visibleField[row][col] = MINE_GUESS;
+         numberMineGuesses++;
       }
       else if (visibleField[row][col] == MINE_GUESS) {
          visibleField[row][col] = QUESTION;
+         numberMineGuesses--;
       }
       else {
          visibleField[row][col] = COVERED;
+
       }
    }
 
@@ -173,6 +171,7 @@ public class VisibleField {
          }
          // Case 3: Square to be uncovered is an empty square
          else {
+            visibleField[row][col] = 0;
             return true;
          }
       }
@@ -214,11 +213,40 @@ public class VisibleField {
       PRE: getMineField().inRange(row, col)
     */
    public boolean isUncovered(int row, int col) {
-      // Checks if square at (row, col) is in any of three covered states
-      return (visibleField[row][col] != MINE) && (visibleField[row][col] != INCORRECT_GUESS)
-              && (visibleField[row][col] != EXPLODED_MINE);
+      // Checks if square at (row, col) is in an uncovered states
+      return (visibleField[row][col] != COVERED) || (visibleField[row][col] == MINE_GUESS)
+              || (visibleField[row][col] == QUESTION);
    }
-   
+
+   public String toString() {
+      String stringVisibleField = "";
+
+      for (int i = 0; i < mineField.numRows(); i++) {
+         for (int j = 0; j < mineField.numCols(); j++) {
+            if (visibleField[i][j] == COVERED) {
+               stringVisibleField += ("[ ]");
+            }
+            else if (visibleField[i][j] == MINE_GUESS) {
+               stringVisibleField += ("[*]");
+            }
+            else if (visibleField[i][j] == QUESTION) {
+               stringVisibleField += ("[?]");
+            }
+            else if (visibleField[i][j] == EXPLODED_MINE) {
+               stringVisibleField += ("[BOOM]");
+            }
+            else if (mineField.numAdjacentMines(i,j) > 0) {
+               stringVisibleField += ("[" + mineField.numAdjacentMines(i,j) + "]");
+            }
+            else {
+               stringVisibleField += ("[-]");
+            }
+         }
+         stringVisibleField += "\n";
+      }
+
+      return stringVisibleField;
+   }
  
    // <put private methods here>
    
