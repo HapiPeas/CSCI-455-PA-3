@@ -210,6 +210,13 @@ public class MineField {
       return currentNumberMines;
    }
 
+    /**
+     * Returns a string representation of the current state of MineField
+     * A square with a mine is represented by "[T]" for true
+     * A square without a mine represented by "[F]" for false
+     *
+     * @return - String representing the status of all squares in MineField
+     */
    public String toString() {
        String stringMinefield = "";
 

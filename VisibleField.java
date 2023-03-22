@@ -207,9 +207,9 @@ public class VisibleField {
          return true;
       }
       else {
+         // Case 2: A non-mine square is still covered (Game continues)
          for (int i = 0; i < mineField.numRows(); i++) {
             for (int j = 0; j < mineField.numCols(); j++) {
-               // Case 2: A non-mine square is still covered (Game continues)
                if ((!mineField.hasMine(i, j)) && (!this.isUncovered(i, j))) {
                   return false;
                }
@@ -235,6 +235,13 @@ public class VisibleField {
               && (visibleField[row][col] != QUESTION);
    }
 
+   /**
+    * Returns a string representation of the current state of VisibleField
+    * Most squares are represented with "[ ]" and a single character (number or symbol) to denote the type of square
+    * An uncovered mine is displayed with "[BOOM]"
+    *
+    * @return - String representing the status of all squares in VisibleField (covered or uncovered)
+    */
    public String toString() {
       String stringVisibleField = "";
 
@@ -255,8 +262,14 @@ public class VisibleField {
             else if (mineField.numAdjacentMines(i,j) > 0) {
                stringVisibleField += ("[" + mineField.numAdjacentMines(i,j) + "]");
             }
+            else if (visibleField[i][j] == MINE) {
+               stringVisibleField += ("[M]");
+            }
+            else if (visibleField[i][j] == INCORRECT_GUESS) {
+               stringVisibleField += ("[X]");
+            }
             else {
-               stringVisibleField += ("[-]");
+               stringVisibleField += ("[-]"); // Empty
             }
          }
          stringVisibleField += "\n";
@@ -301,9 +314,21 @@ public class VisibleField {
       }
    }
 
-
-   // Starts the DFS search with the root cell at [row, col]
-   // Starts searching north / up from root cell and then goes clockwise, including diagonal cells
+   /**
+    * Applies a recursive depth-first-search (DFS) algorithm in a graph (2D array)
+    * Given a starting position in VisibleField represented by [row, col], recursively searches through the 2D array
+    * for all adjacent empty squares until a border is reached
+    *
+    * The recursion searches in clockwise order starting from the square north of the given square, including diagonals
+    *
+    * A border can be either the bounds of the 2D array used by VisibleField or a square that is adjacent to a mine
+    * If the method reaches the bounds of the 2D array, it returns from the stack
+    * If the method reaches a square that is adjacent to a mine, it will uncover the square and then return from the
+    * stack
+    *
+    * @param row - The row of VisibleField and MineField that the position is located at
+    * @param col - The column of VisibleField and MineField that the position is located at
+    */
    private void dfsRecursion(int row, int col) {
       // If the given location is within range of array and is an empty square
       if ((!mineField.inRange(row, col)) || (recursiveTracker[row][col])) {
@@ -331,7 +356,5 @@ public class VisibleField {
       dfsRecursion(row + 1, col - 1); // Move down and left
       dfsRecursion(row, col - 1); // Move left
       dfsRecursion(row - 1, col - 1); // Move up and left
-
    }
-
 }
