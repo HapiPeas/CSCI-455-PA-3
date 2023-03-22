@@ -4,6 +4,7 @@
 // Spring 2023
 
 import java.util.Random;
+
 /** 
    MineField
       class with locations of mines for a game.
@@ -12,7 +13,8 @@ import java.util.Random;
       includes convenience method to tell the number of mines adjacent to a location.
  */
 public class MineField {
-   
+
+    // Instance Variables
    private boolean[][] minefield;
    private int currentNumberMines;
    private final int minefieldRows;
@@ -28,18 +30,20 @@ public class MineField {
                        and must be rectangular (i.e., every row is the same length)
     */
    public MineField(boolean[][] mineData) {
-       minefield = mineData.clone();
-       minefieldRows = minefield.length;
-       minefieldColumns = minefield[0].length;
+       minefieldRows = mineData.length;
+       minefieldColumns = mineData[0].length;
+       minefield = new boolean[minefieldRows][minefieldColumns];
 
       // Loop through 2D array and count number of mines (true values), assign to currentNumberMines
-      for (boolean[] i: minefield) {
-          for (boolean j: i) {
-              if (j) {
+      for (int i = 0; i < minefieldRows; i++) {
+          for (int j = 0; j < minefieldColumns; j++) {
+              if (mineData[i][j]) {
                   currentNumberMines++;
               }
+              minefield[i][j] = mineData[i][j];
           }
       }
+
    }
    
    
@@ -224,14 +228,14 @@ public class MineField {
        return stringMinefield;
    }
    
-   // <put private methods here>
+   // Private Methods
 
     /**
      * Checks if a given a position of the minefield, in terms of the row and column values, is a mine
      *
      * @param row - row of the position to be checked in the minefield
      * @param column - column of the position to be checked in the minefield
-     * @return - integer 1 if it is a mine, integer 0 if it is not a mine
+     * @return -  1 if it is a mine,  0 if it is not a mine
      */
    private int mineChecker(int row, int column) {
        if (minefield[row][column]) {

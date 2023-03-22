@@ -38,7 +38,7 @@ public class VisibleField {
    public static final int EXPLODED_MINE = 11;   // the one you uncovered by mistake (that caused you to lose)
    // ----------------------------------------------------------   
   
-   // <put instance variables here>
+   // Instance Variables
    private int[][] visibleField;
    private boolean[][] recursiveTracker;
    private  MineField mineField;
@@ -167,25 +167,32 @@ public class VisibleField {
    public boolean uncover(int row, int col) {
       // Continue iff the selected square is still covered
       if (!this.isUncovered(row, col)) {
-         // Case 1: Square to be uncovered is a mine
+         // Case 1: Square to be uncovered is a mine (Game Loss)
          if (mineField.hasMine(row, col)) {
             visibleField[row][col] = EXPLODED_MINE;
             coveredMine = false;
-            this.postGameStatus();
+            this.postGameStatusLoss();
             return false;
          }
-         // Case 2: Square to be uncovered has at least one adjacent mine
+         // Case 2: Square to be uncovered has at least one adjacent mine (Possible Game Win)
          else if (mineField.numAdjacentMines(row, col) > 0) {
             visibleField[row][col] = mineField.numAdjacentMines(row, col);
+            if (this.isGameOver()) {
+               this.postGameStatusWin();
+            }
             return true;
          }
-         // Case 3: Square to be uncovered is an empty square
+         // Case 3: Square to be uncovered is an empty square (Possible Game Win)
          else {
             dfsRecursion(row, col);
+            if (this.isGameOver()) {
+               this.postGameStatusWin();
+            }
             return true;
          }
       }
-      return true;       // Do nothing if square is already uncovered
+      // Do nothing if square is already uncovered
+      return true;
    }
  
    
@@ -258,10 +265,14 @@ public class VisibleField {
       return stringVisibleField;
    }
  
-   // <put private methods here>
+   // Private Methods
 
-   // Marks all incorrectly guessed squares (assumed to be mines) and marks all non-guessed mines
-   private void postGameStatus() {
+   /**
+    * On a game loss (uncovering a mine location), change status of all
+    * (1) incorrectly marked mine locations to INCORRECT_GUESS (integer value 10)
+    * (2) all mine locations that were not marked to MINE (integer value 9)
+    */
+   private void postGameStatusLoss() {
       for (int i = 0; i < mineField.numRows(); i++) {
          for (int j = 0; j <mineField.numCols(); j++) {
             // Case 1: Square is marked as being a mine BUT is not a mine
@@ -274,6 +285,22 @@ public class VisibleField {
          }
       }
    }
+
+   /**
+    * On a game win (uncovering all non-mine locations), change status of all
+    * (1) all mine locations that were not marked to MINE_GUESS (integer value -2)
+    * There will not be any incorrectly marked squares
+    */
+   private void postGameStatusWin() {
+      for (int i = 0; i < mineField.numRows(); i++) {
+         for (int j = 0; j < mineField.numCols(); j++) {
+            if ((visibleField[i][j] != MINE_GUESS) && (!this.isUncovered(i,j)) && (mineField.hasMine(i,j))) {
+               visibleField[i][j] = MINE_GUESS;
+            }
+         }
+      }
+   }
+
 
    // Starts the DFS search with the root cell at [row, col]
    // Starts searching north / up from root cell and then goes clockwise, including diagonal cells
