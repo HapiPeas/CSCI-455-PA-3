@@ -19,6 +19,11 @@
   outside this class via the getMineField accessor.  
  */
 public class VisibleField {
+   /**
+    * Representation Invariants
+    *
+    * 1. All squares in visibleField has an integer value between [-3, 11], inclusive
+    */
    // ----------------------------------------------------------   
    // The following public constants (plus numbers mentioned in comments below) are the possible states of one
    // location (a "square") in the visible field (all are values that can be returned by public method 
@@ -67,6 +72,7 @@ public class VisibleField {
          }
       }
 
+      assert isValidVisibleField();
    }
    
    
@@ -91,6 +97,7 @@ public class VisibleField {
          }
       }
 
+      assert isValidVisibleField();
    }
   
    
@@ -147,6 +154,8 @@ public class VisibleField {
       else {
          visibleField[row][col] = COVERED;
       }
+
+      assert isValidVisibleField();
    }
 
    
@@ -172,6 +181,7 @@ public class VisibleField {
             visibleField[row][col] = EXPLODED_MINE;
             coveredMine = false;
             this.postGameStatusLoss();
+            assert isValidVisibleField();
             return false;
          }
          // Case 2: Square to be uncovered has at least one adjacent mine (Possible Game Win)
@@ -180,6 +190,7 @@ public class VisibleField {
             if (this.isGameOver()) {
                this.postGameStatusWin();
             }
+            assert isValidVisibleField();
             return true;
          }
          // Case 3: Square to be uncovered is an empty square (Possible Game Win)
@@ -188,9 +199,11 @@ public class VisibleField {
             if (this.isGameOver()) {
                this.postGameStatusWin();
             }
+            assert isValidVisibleField();
             return true;
          }
       }
+      assert isValidVisibleField();
       // Do nothing if square is already uncovered
       return true;
    }
@@ -204,6 +217,7 @@ public class VisibleField {
    public boolean isGameOver() {
       // Case 1: A mine was uncovered (Game Loss)
       if (!coveredMine) {
+         assert isValidVisibleField();
          return true;
       }
       else {
@@ -211,11 +225,13 @@ public class VisibleField {
          for (int i = 0; i < mineField.numRows(); i++) {
             for (int j = 0; j < mineField.numCols(); j++) {
                if ((!mineField.hasMine(i, j)) && (!this.isUncovered(i, j))) {
+                  assert isValidVisibleField();
                   return false;
                }
             }
          }
          // Case 3: All non-mine squares are uncovered (Game win)
+         assert isValidVisibleField();
          return true;
       }
    }
@@ -230,6 +246,7 @@ public class VisibleField {
       PRE: getMineField().inRange(row, col)
     */
    public boolean isUncovered(int row, int col) {
+      assert isValidVisibleField();
       // Checks if square at (row, col) is in an uncovered states
       return (visibleField[row][col] != COVERED) && (visibleField[row][col] != MINE_GUESS)
               && (visibleField[row][col] != QUESTION);
@@ -275,6 +292,7 @@ public class VisibleField {
          stringVisibleField += "\n";
       }
 
+      assert isValidVisibleField();
       return stringVisibleField;
    }
  
@@ -297,6 +315,7 @@ public class VisibleField {
             }
          }
       }
+      assert isValidVisibleField();
    }
 
    /**
@@ -312,6 +331,7 @@ public class VisibleField {
             }
          }
       }
+      assert isValidVisibleField();
    }
 
    /**
@@ -332,21 +352,23 @@ public class VisibleField {
    private void dfsRecursion(int row, int col) {
       // If the given location is within range of array and is an empty square
       if ((!mineField.inRange(row, col)) || (recursiveTracker[row][col])) {
+         assert isValidVisibleField();
          return;
       }
       else if (visibleField[row][col] == MINE_GUESS || visibleField[row][col] == QUESTION) {
+         assert isValidVisibleField();
          return;
       }
       else if ((mineField.numAdjacentMines(row, col) > 0) && (mineField.numAdjacentMines(row, col) < 9)) {
          visibleField[row][col] = mineField.numAdjacentMines(row, col);
          recursiveTracker[row][col] = true;
+         assert isValidVisibleField();
          return;
       }
       else {
             visibleField[row][col] = 0;
             recursiveTracker[row][col] = true;
       }
-
 
       dfsRecursion(row - 1, col); // Move up
       dfsRecursion(row - 1, col + 1); // Move up and right
@@ -357,4 +379,20 @@ public class VisibleField {
       dfsRecursion(row, col - 1); // Move left
       dfsRecursion(row - 1, col - 1); // Move up and left
    }
+
+   /**
+    * Returns iff the VisibleField object is in a valid state
+    * (See representation invariant comment for more details.)
+    */
+   private boolean isValidVisibleField() {
+      for (int i = 0; i < visibleField.length; i++) {
+         for (int j = 0; j < visibleField[0].length; j++) {
+            if ((visibleField[i][j] < -3) || (visibleField[i][j] > 11)) {
+               return false;
+            }
+         }
+      }
+      return true;
+   }
+
 }

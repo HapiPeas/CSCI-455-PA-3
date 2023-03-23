@@ -13,6 +13,13 @@ import java.util.Random;
       includes convenience method to tell the number of mines adjacent to a location.
  */
 public class MineField {
+    /**
+     * Representation Invariants
+     * 1. Each cell of the 2D boolean array representing the minefield is always either 'true' or 'false'
+     *      - This is always true in Java and doesn't need to be checked
+     * 2. minefieldRows is always equal to minefield.length
+     * 3. minefieldColumns is always equal to minefield[0].length
+     */
 
     // Instance Variables
    private boolean[][] minefield;
@@ -44,6 +51,8 @@ public class MineField {
           }
       }
 
+      assert isValidMineField();
+
    }
    
    
@@ -61,6 +70,8 @@ public class MineField {
       minefieldRows = numRows;
       minefieldColumns = numCols;
       currentNumberMines = numMines;
+
+      assert isValidMineField();
    }
    
 
@@ -99,6 +110,8 @@ public class MineField {
           }
       }
 
+       assert isValidMineField();
+
    }
    
    
@@ -111,6 +124,8 @@ public class MineField {
    public void resetEmpty() {
        // Sets minefield to a new 2D, same-sized boolean array with no mines (default value is false)
        minefield = new boolean[minefieldRows][minefieldColumns];
+
+       assert isValidMineField();
    }
 
    
@@ -147,6 +162,7 @@ public class MineField {
           }
       }
 
+      assert isValidMineField();
       return adjacentMines;
    }
    
@@ -160,11 +176,14 @@ public class MineField {
    */
    public boolean inRange(int row, int col) {
       if ((row < 0) || (row >= minefieldRows)) {
+          assert isValidMineField();
           return false;
       }
       if ((col < 0) || (col >= minefieldColumns)) {
+          assert isValidMineField();
           return false;
       }
+      assert isValidMineField();
       return true;
    }
    
@@ -232,6 +251,7 @@ public class MineField {
            stringMinefield += "\n";
        }
 
+       assert isValidMineField();
        return stringMinefield;
    }
    
@@ -246,10 +266,20 @@ public class MineField {
      */
    private int mineChecker(int row, int column) {
        if (minefield[row][column]) {
+           assert isValidMineField();
            return 1;
        }
+       assert isValidMineField();
        return 0;
    }
+
+    /**
+     * Returns true iff the MineField object is in a valid state.
+     * (See representation invariant comment for more details.)
+     */
+    private boolean isValidMineField() {
+        return (minefieldRows == minefield.length) && (minefieldColumns == minefield[0].length);
+    }
          
 }
 
